@@ -1,24 +1,37 @@
+import { useAuth } from 'react-oidc-context';
+
 import logo from './logo.svg';
 import './App.css';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+  const {
+    activeNavigator,
+    error,
+    isAuthenticated,
+    isLoading,
+    removeUser,
+    signinRedirect,
+    user
+  } = useAuth();
+
+  switch (activeNavigator) {
+    case 'signinSilent':
+      return <div>Signing you in...</div>;
+    case 'signoutRedirect':
+      return <div>Signing you out...</div>;
+  }
+
+  return isLoading ? (
+    <div>Loading...</div>
+  ) : error ? (
+    <div>Opps... {error.message}</div>
+  ) : isAuthenticated ? (
+    <div>
+      <div>Hello {user.profile.sub}</div>
+      <button onClick={removeUser}>Log out</button>
     </div>
+  ) : (
+    <button onClick={signinRedirect}>Log in</button>
   );
 }
 
